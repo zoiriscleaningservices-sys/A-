@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cold Calling Lock In My G</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <!-- Login Section -->
+  <div id="login" class="flex items-center justify-center min-h-screen gradient-bg p-4">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md card-hover" data-aos="zoom-in">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i data-feather="lock" class="w-8 h-8 text-blue-600 dark:text-blue-300"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">🔒 Lock In</h1>
+        <p class="text-gray-600 dark:text-gray-300">Cold calling productivity platform</p>
+      </div>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Name</label>
+          <input id="username" type="text" placeholder="Enter your name" 
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"/>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+          <input id="passwordInput" type="password" placeholder="Enter password" 
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"/>
+        </div>
+        
+        <button onclick="checkLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center pulse-animation">
+          <i data-feather="log-in" class="w-5 h-5 mr-2"></i>
+          Enter Platform
+        </button>
+        
+        <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-4">
+          Your name is used to track who added each item in the system
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4" data-aos="fade-down">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <i data-feather="phone" class="w-5 h-5 text-white"></i>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Lock-In My G</h1>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <span id="whoami" class="text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full"></span>
+        
+        <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+          <i data-feather="moon" class="w-5 h-5 text-gray-700 dark:text-gray-300 dark:hidden"></i>
+          <i data-feather="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+        </button>
+        
+        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+          <i data-feather="log-out" class="w-4 h-4"></i>
+          <span class="hidden md:inline">Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Motivation Section -->
+    <section class="bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 p-4 rounded-2xl shadow-sm" data-aos="fade-up">
+      <div class="flex flex-col md:flex-row items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
+            <i data-feather="zap" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="text-lg font-semibold text-gray-800 dark:text-white">Daily Motivation</span>
+        </div>
+        
+        <span id="motivationText" class="flex-1 text-gray-700 dark:text-yellow-100 text-center md:text-left"></span>
+        
+        <button onclick="generateMotivation()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap">
+          <i data-feather="refresh-cw" class="w-4 h-4"></i>
+          New Motivation
+        </button>
+      </div>
+    </section>
+
+    <!-- Leads Section -->
+    <section class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm" data-aos="fade-up" data-aos-delay="100">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+          <i data-feather="users" class="w-4 h-4 text-white"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Leads Management</h2>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+          <input id="leadName" placeholder="Lead name" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
+          <input id="leadPhone" placeholder="Phone number" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+          <input id="leadEmail" placeholder="Email address" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company</label>
+          <input id="leadCompany" placeholder="Company name" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notes</label>
+        <textarea id="leadNotes" placeholder="Additional notes" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20"></textarea>
+      </div>
+      
+      <div class="flex flex-wrap gap-3 mb-6">
+        <button onclick="addLead()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+          <i data-feather="plus" class="w-4 h-4"></i>
+          Add Lead
+        </button>
+        
+        <div class="flex gap-2">
+          <button onclick="filterLeads('all')" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">All</button>
+          <button onclick="filterLeads('open')" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Open</button>
+          <button onclick="filterLeads('closed')" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Closed</button>
+        </div>
+      </div>
+      
+      <ul id="leadsList" class="space-y-3"></ul>
+    </section>
+
+    <!-- Cold Calling Ideas Section -->
+    <section class="bg-gradient-to-r from-green-100 to-teal-100 dark:from-green-900 dark:to-teal-900 p-6 rounded-2xl shadow-sm" data-aos="fade-up" data-aos-delay="200">
+      <div class="flex flex-col md:flex-row items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+            <i data-feather="phone-call" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="text-lg font-semibold text-gray-800 dark:text-white">Cold Calling Ideas</span>
+        </div>
+        
+        <span id="coldCallText" class="flex-1 text-gray-700 dark:text-green-100 text-center md:text-left"></span>
+        
+        <button onclick="generateColdCallIdea()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap">
+          <i data-feather="refresh-cw" class="w-4 h-4"></i>
+          New Idea
+        </button>
+      </div>
+    </section>
+
+    <!-- Calendar Section -->
+    <section class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm" data-aos="fade-up" data-aos-delay="300">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+          <i data-feather="calendar" class="w-4 h-4 text-white"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Calendar</h2>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Event Title</label>
+          <input id="eventTitle" placeholder="Meeting title" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
+          <input id="eventDate" type="date" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time</label>
+          <input id="eventTime" type="time" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notes</label>
+        <textarea id="eventNotes" placeholder="Event details" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20"></textarea>
+      </div>
+      
+      <div class="flex gap-3 mb-6">
+        <button onclick="addEvent()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+          <i data-feather="plus" class="w-4 h-4"></i>
+          Add Event
+        </button>
+        
+        <button onclick="clearPastEvents()" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+          <i data-feather="trash-2" class="w-4 h-4"></i>
+          Clear Past
+        </button>
+      </div>
+      
+      <ul id="eventsList" class="space-y-3"></ul>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm" data-aos="fade-up" data-aos-delay="400">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+          <i data-feather="briefcase" class="w-4 h-4 text-white"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Projects</h2>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Title</label>
+        <input id="projectTitle" placeholder="Project name" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-3"/>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+        <textarea id="projectDesc" placeholder="Project details" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20"></textarea>
+      </div>
+      
+      <button onclick="addProject()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 mb-6">
+        <i data-feather="plus" class="w-4 h-4"></i>
+        Add Project
+      </button>
+      
+      <ul id="projectsList" class="space-y-3"></ul>
+    </section>
+
+    <!-- File Uploads Section -->
+    <section class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm" data-aos="fade-up" data-aos-delay="500">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
+          <i data-feather="file" class="w-4 h-4 text-white"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">File Uploads</h2>
+      </div>
+      
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload Files</label>
+        <div class="flex items-center gap-3">
+          <label for="fileInput" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
+            <i data-feather="upload" class="w-4 h-4"></i>
+            Choose File
+          </label>
+          <input id="fileInput" type="file" onchange="uploadFile(event)" class="hidden"/>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Max 10MB per file</span>
+        </div>
+      </div>
+      
+      <ul id="filesList" class="space-y-3"></ul>
+    </section>
+  </div>
+
+  <script>
+    // Motivation generator arrays
+    const intros = [
+      "Every call is", "Remember,", "Stay sharp —", "Your next client is",
+      "Success is", "The grind is", "Today is", "Each dial is",
+      "Don’t forget —", "Winning means", "Cold calling is",
+      "Momentum comes from", "Confidence comes from",
+      "Energy comes from", "Your future is", "Discipline is",
+      "Consistency means", "Push through —", "The bag is",
+      "Closing comes from", "Greatness is", "Every ‘no’ is",
+      "Focus is", "Your dream deal is", "Opportunity is",
+      "The money is", "Each ring is", "Persistence is",
+      "Courage is", "Lock in —"
+    ];
+
+    const middles = [
+      "one step closer to a closed deal",
+      "waiting behind the next dial",
+      "hidden in the objections",
+      "a ‘yes’ after the no",
+      "built from consistency",
+      "won by persistence",
+      "earned with patience",
+      "fueled by discipline",
+      "secured through action",
+      "on the other end of the phone",
+      "inside the grind",
+      "waiting for your voice",
+      "one brave question away",
+      "created by effort",
+      "driven by your energy",
+      "found in rejection",
+      "a numbers game — and you’re playing to win",
+      "just one call away",
+      "hiding behind hesitation",
+      "waiting on your confidence",
+      "delivered by execution",
+      "unlocked with every dial",
+      "about planting seeds",
+      "a result of discipline",
+      "stacked on small wins",
+      "earned, not given",
+      "always in motion",
+      "a daily habit",
+      "about staying in the pocket",
+      "the reward of action"
+    ];
+
+    const endings = [
+      "so keep pushing!", "don’t stop dialing.", "stay hungry.",
+      "lock in and win.", "the bag is waiting.", "you got this.",
+      "the deal is yours.", "keep grinding.", "every call counts.",
+      "your success is near.", "make it happen.", "win the day.",
+      "never fold.", "stay dangerous.", "keep applying pressure.",
+      "every no gets you closer.", "money loves speed.",
+      "trust the process.", "dial with confidence.", "build momentum.",
+      "your grind will pay off.", "work now, shine later.",
+      "close with energy.", "stack your wins.", "the pipeline is growing.",
+      "don’t wait — dial.", "consistency closes deals.",
+      "momentum is currency.", "focus beats talent.",
+      "lock in, my G."
+    ];
+
+    // Cold calling idea arrays
+    const callIntros = [
+      "Hi, this is [Your Name] from Iskend Marketing,", 
+      "Hey, I’ll keep this quick,", 
+      "Good morning, I was looking for the person in charge of growth,", 
+      "Quick question for you,", 
+      "I noticed your business online and", 
+      "Not sure if this is relevant but",
+      "I specialize in helping businesses like yours",
+      "Just reaching out because",
+      "I wanted to share an idea real quick",
+      "I saw your website and thought"
+    ];
+
+    const callPitches = [
+      "we help businesses get more leads through optimized websites.", 
+      "our team builds websites designed to close more clients.", 
+      "we turn outdated websites into money-making machines.", 
+      "our goal is to double your inbound calls with better design.", 
+      "we create websites that rank higher and convert faster.", 
+      "we focus on making your site bring in consistent clients.", 
+      "our websites are built to make sales easier for you.", 
+      "we specialize in high-converting websites for service businesses.", 
+      "we help business owners like you stand out online.", 
+      "we turn websites into 24/7 sales reps."
+    ];
+
+    const callClosings = [
+      "Would you be open to a quick chat this week?", 
+      "Does it make sense to hop on a 10-minute call?", 
+      "When’s the best time to show you a quick demo?", 
+      "Can I send you a quick example of our work?", 
+      "What would be the best way to share more info with you?", 
+      "Would it hurt to see how this could work for you?", 
+      "Do you have 5 minutes to see how this could help?", 
+      "How’s tomorrow afternoon for a quick call?", 
+      "Would you be against me sending a sample?", 
+      "Can we set up a time this week to dive deeper?"
+    ];
+
+    // App password
+    const APPPW = "iska";
+    let CURUSER = null;
+
+    /* ===== Utility Functions ===== */
+    function generateMotivation() {
+      const intro = intros[Math.floor(Math.random() * intros.length)];
+      const middle = middles[Math.floor(Math.random() * middles.length)];
+      const ending = endings[Math.floor(Math.random() * endings.length)];
+      document.getElementById("motivationText").innerText = `${intro} ${middle}, ${ending}`;
+    }
+
+    function generateColdCallIdea() {
+      const intro = callIntros[Math.floor(Math.random() * callIntros.length)];
+      const pitch = callPitches[Math.floor(Math.random() * callPitches.length)];
+      const closing = callClosings[Math.floor(Math.random() * callClosings.length)];
+      document.getElementById("coldCallText").innerText = `${intro} ${pitch} ${closing}`;
+    }
+
+    /* ===== Login ===== */
+    function checkLogin() {
+      const pw = document.getElementById("passwordInput").value.trim();
+      const un = document.getElementById("username").value.trim();
+      if (!un) return alert("Please enter your name.");
+      if (pw !== APPPW) return alert("Wrong password");
+      CURUSER = un;
+      localStorage.setItem("currentUser", CURUSER);
+      document.getElementById("whoami").textContent = `Signed in as: ${CURUSER}`;
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+      loadAll();
+      generateMotivation();
+      generateColdCallIdea();
+    }
+
+    function logout() {
+      CURUSER = null;
+      localStorage.removeItem("currentUser");
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("login").classList.remove("hidden");
+      document.getElementById("username").value = "";
+      document.getElementById("passwordInput").value = "";
+    }
+
+    /* ===== Storage Helpers ===== */
+    const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+    const load = (k, def=[]) => JSON.parse(localStorage.getItem(k) || JSON.stringify(def));
+
+    /* ===== Leads ===== */
+    let leadFilter = "all";
+    function addLead(){
+      const l = { 
+        id: Date.now(), 
+        addedBy: CURUSER,
+        name: document.getElementById("leadName").value.trim(), 
+        phone: document.getElementById("leadPhone").value.trim(),
+        email: document.getElementById("leadEmail").value.trim(), 
+        company: document.getElementById("leadCompany").value.trim(),
+        notes: document.getElementById("leadNotes").value.trim(), 
+        closed: false,
+        date: new Date().toLocaleDateString()
+      };
+      
+      if (!l.name) return alert("Name required");
+      const arr = load("leads", []);
+      arr.push(l); 
+      save("leads", arr);
+      
+      // Clear form
+      document.getElementById("leadName").value = "";
+      document.getElementById("leadPhone").value = "";
+      document.getElementById("leadEmail").value = "";
+      document.getElementById("leadCompany").value = "";
+      document.getElementById("leadNotes").value = "";
+      
+      renderLeads();
+    }
+
+    function toggleLeadClosed(id){
+      const arr = load("leads",[]);
+      const ld = arr.find(x=>x.id===id);
+      if (ld) ld.closed = !ld.closed;
+      save("leads",arr); 
+      renderLeads();
+    }
+
+    function deleteLead(id, addedBy){
+      if (addedBy !== CURUSER) return alert(`Only ${addedBy} can delete this lead.`);
+      if (!confirm("Are you sure you want to delete this lead?")) return;
+      
+      save("leads", load("leads",[]).filter(x=>x.id!==id)); 
+      renderLeads();
+    }
+
+    function filterLeads(mode){ 
+      leadFilter = mode; 
+      renderLeads(); 
+    }
+
+    function renderLeads(){
+      const list = document.getElementById("leadsList");
+      list.innerHTML = "";
+      let arr = load("leads",[]);
+      
+      if (leadFilter==="open") arr = arr.filter(l=>!l.closed);
+      if (leadFilter==="closed") arr = arr.filter(l=>l.closed);
+      
+      arr.sort((a,b)=>b.id-a.id).forEach(l => {
+        const phone = l.phone? `<a href="tel:${l.phone}" class="text-blue-600 dark:text-blue-400 hover:underline">${l.phone}</a>` : "";
+        const email= l.email? `<a href="mailto:${l.email}" class="text-blue-600 dark:text-blue-400 hover:underline">${l.email}</a>` : "";
+        
+        list.innerHTML += `
+          <li class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-3 ${l.closed ? "bg-green-50 dark:bg-green-900/20" : "bg-gray-50 dark:bg-gray-700/30"}">
+            <div class="flex-1">
+              <div class="font-semibold text-gray-800 dark:text-white">${l.name} ${l.company ? `• ${l.company}` : ""}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                ${phone} ${phone && email ? " | " : ""} ${email}
+              </div>
+              ${l.notes ? `<div class="text-gray-700 dark:text-gray-300 mt-2">${l.notes}</div>` : ""}
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                Added by: ${l.addedBy} • ${l.date}
+                ${l.closed ? '<span class="ml-2 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">Closed</span>' : '<span class="ml-2 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-full">Open</span>'}
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="toggleLeadClosed(${l.id})" class="text-xs ${l.closed ? "bg-gray-600 hover:bg-gray-700" : "bg-yellow-600 hover:bg-yellow-700"} text-white px-3 py-2 rounded-lg transition-colors">
+                ${l.closed ? "Reopen" : "Close"}
+              </button>
+              <button onclick="deleteLead(${l.id}, '${l.addedBy}')" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors">
+                Delete
+              </button>
+            </div>
+          </li>`;
+      });
+      
+      if (arr.length === 0) {
+        list.innerHTML = `<li class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <i data-feather="users" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+          <p>No leads found. Add your first lead above!</p>
+        </li>`;
+      }
+    }
+
+    /* ===== Events ===== */
+    function addEvent(){
+      const e = {
+        id: Date.now(), 
+        addedBy: CURUSER,
+        title: document.getElementById("eventTitle").value.trim(), 
+        date: document.getElementById("eventDate").value,
+        time: document.getElementById("eventTime").value, 
+        notes: document.getElementById("eventNotes").value.trim()
+      };
+      
+      if(!e.title || !e.date) return alert("Title & Date required");
+      const arr = load("events", []); 
+      arr.push(e); 
+      save("events", arr);
+      
+      // Clear form
+      document.getElementById("eventTitle").value = "";
+      document.getElementById("eventDate").value = "";
+      document.getElementById("eventTime").value = "";
+      document.getElementById("eventNotes").value = "";
+      
+      renderEvents();
+    }
+
+    function deleteEvent(id, addedBy){
+      if(addedBy !== CURUSER) return alert(`Only ${addedBy} can delete this event.`);
+      if (!confirm("Are you sure you want to delete this event?")) return;
+      
+      save("events", load("events",[]).filter(x=>x.id!==id)); 
+      renderEvents();
+    }
+
+    function clearPastEvents(){
+      const today = new Date().toISOString().slice(0,10);
+      if (!confirm("Are you sure you want to clear all past events?")) return;
+      
+      save("events", load("events",[]).filter(e=>e.date >= today)); 
+      renderEvents();
+    }
+
+    function renderEvents(){
+      const list = document.getElementById("eventsList");
+      const arr = load("events",[]).sort((a,b)=>(a.date+a.time)<(b.date+b.time)?-1:1);
+      
+      list.innerHTML = arr.map(e=>`
+        <li class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-700/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div class="flex-1">
+            <div class="font-semibold text-gray-800 dark:text-white">${e.title}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              ${e.date}${e.time ? ` • ${e.time}` : ""}
+            </div>
+            ${e.notes ? `<div class="text-gray-700 dark:text-gray-300 mt-2">${e.notes}</div>` : ""}
+            <div class="text-xs text-gray-500 dark:text-gray-400 mt-2">Added by: ${e.addedBy}</div>
+          </div>
+          <button onclick="deleteEvent(${e.id}, '${e.addedBy}')" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors">
+            Delete
+          </button>
+        </li>`).join("");
+        
+      if (arr.length === 0) {
+        list.innerHTML = `<li class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <i data-feather="calendar" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+          <p>No events scheduled. Add your first event above!</p>
+        </li>`;
+      }
+    }
+
+    /* ===== Projects ===== */
+    function addProject(){
+      const p = {
+        id: Date.now(), 
+        addedBy: CURUSER,
+        title: document.getElementById("projectTitle").value.trim(), 
+        desc: document.getElementById("projectDesc").value.trim()
+      };
+      
+      if(!p.title) return alert("Title required");
+      const arr = load("projects",[]); 
+      arr.push(p); 
+      save("projects",arr);
+      
+      // Clear form
+      document.getElementById("projectTitle").value = "";
+      document.getElementById("projectDesc").value = "";
+      
+      renderProjects();
+    }
+
+    function deleteProject(id, addedBy){
+      if(addedBy !== CURUSER) return alert(`Only ${addedBy} can delete this project.`);
+      if (!confirm("Are you sure you want to delete this project?")) return;
+      
+      save("projects", load("projects",[]).filter(x=>x.id!==id)); 
+      renderProjects();
+    }
+
+    function renderProjects(){
+      const list = document.getElementById("projectsList");
+      const arr = load("projects",[]).sort((a,b)=>b.id-a.id);
+      
+      list.innerHTML = arr.map(p=>`
+        <li class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-700/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div class="flex-1">
+            <div class="font-semibold text-gray-800 dark:text-white">${p.title}</div>
+            ${p.desc ? `<div class="text-gray-700 dark:text-gray-300 mt-2">${p.desc}</div>` : ""}
+            <div class="text-xs text-gray-500 dark:text-gray-400 mt-2">Added by: ${p.addedBy}</div>
+          </div>
+          <button onclick="deleteProject(${p.id}, '${p.addedBy}')" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors">
+            Delete
+          </button>
+        </li>`).join("");
+        
+      if (arr.length === 0) {
+        list.innerHTML = `<li class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <i data-feather="briefcase" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+          <p>No projects added. Create your first project above!</p>
+        </li>`;
+      }
+    }
+
+    /* ===== Files ===== */
+    function uploadFile(evt){
+      const f = evt.target.files[0];
+      if(!f) return;
+      
+      // Check file size (max 10MB)
+      if (f.size > 10 * 1024 * 1024) {
+        alert("File size exceeds 10MB limit");
+        evt.target.value = "";
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const arr = load("files",[]);
+        arr.push({
+          id: Date.now(), 
+          addedBy: CURUSER,
+          name: f.name, 
+          type: f.type || "application/octet-stream",
+          content: e.target.result,
+          date: new Date().toLocaleDateString()
+        });
+        save("files",arr); 
+        renderFiles(); 
+        evt.target.value="";
+      };
+      reader.readAsDataURL(f);
+    }
+
+    function deleteFile(id, addedBy){
+      if(addedBy !== CURUSER) return alert(`Only ${addedBy} can delete this file.`);
+      if (!confirm("Are you sure you want to delete this file?")) return;
+      
+      save("files", load("files",[]).filter(x=>x.id!==id)); 
+      renderFiles();
+    }
+
+    function renderFiles(){
+      const list = document.getElementById("filesList");
+      const arr = load("files",[]).sort((a,b)=>b.id-a.id);
+      
+      list.innerHTML = arr.map(f=>{
+        // Get file icon based on type
+        let icon = "file";
+        if (f.type.includes("image")) icon = "image";
+        else if (f.type.includes("pdf")) icon = "file-text";
+        else if (f.type.includes("word") || f.type.includes("document")) icon = "file-text";
+        else if (f.type.includes("sheet") || f.type.includes("excel")) icon = "file-text";
+        else if (f.type.includes("zip") || f.type.includes("compressed")) icon = "archive";
+        
+        return `
+        <li class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-700/30 flex justify-between items-center gap-3">
+          <div class="flex items-center gap-3">
+            <i data-feather="${icon}" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
+            <div>
+              <a href="${f.content}" download="${f.name}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">${f.name}</a>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Uploaded by: ${f.addedBy} • ${f.date}</div>
+            </div>
+          </div>
+          <button onclick="deleteFile(${f.id}, '${f.addedBy}')" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors">
+            Delete
+          </button>
+        </li>`;
+      }).join("");
+      
+      if (arr.length === 0) {
+        list.innerHTML = `<li class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <i data-feather="file" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+          <p>No files uploaded. Upload your first file above!</p>
+        </li>`;
+      }
+    }
+
+    /* ===== Dark Mode Toggle ===== */
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('darkmode', isDark ? 'true' : 'false');
+    }
+
+    /* ===== Load Everything ===== */
+    function loadAll(){
+      const user = localStorage.getItem("currentUser") || null;
+      if(user) {
+        CURUSER = user;
+        document.getElementById("whoami").textContent = `Signed in as: ${CURUSER}`;
+      }
+      
+      // Check for dark mode preference
+      if(localStorage.getItem("darkmode") === "true") {
+        document.documentElement.classList.add("dark");
+      }
+      
+      renderLeads(); 
+      renderEvents(); 
+      renderProjects(); 
+      renderFiles();
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if user is already logged in
+      const user = localStorage.getItem("currentUser");
+      if (user) {
+        CURUSER = user;
+        document.getElementById("whoami").textContent = `Signed in as: ${CURUSER}`;
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        loadAll();
+        generateMotivation();
+        generateColdCallIdea();
+      }
+      
+      // Initialize feather icons
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+    });
+  </script>
+
+  <script>
+    // Initialize feather icons after page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+    });
+  </script>
+</body>
+</html>
