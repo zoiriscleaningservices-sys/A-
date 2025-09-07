@@ -53,104 +53,6 @@
     </div>
   </div>
 
-
-
-
-
-<!-- ===== Firebase SDKs ===== -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
-
-<script>
-  // ===== Firebase Config =====
-const firebaseConfig = {
-  apiKey: "AIzaSyAHpsm-nHcPTVoRncQr2jvu3LOPZxNz2vM",
-  authDomain: "places-e088c.firebaseapp.com",
-  projectId: "places-e088c",
-  storageBucket: "places-e088c.firebasestorage.app",
-  messagingSenderId: "237812343265",
-  appId: "1:237812343265:web:f600771de06ef46c4b72a0",
-  measurementId: "G-F113H2R5P5"
-};
-
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  // ===== Leads Collection =====
-  async function addLead(name, number) {
-    if (!name || !number) return;
-    await db.collection("leads").add({
-      name,
-      number,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  }
-
-  // ===== Chat Collection =====
-  async function sendChat(user, message) {
-    if (!message) return;
-    await db.collection("chat").add({
-      user: user || "Anonymous",
-      message,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  }
-
-  // ===== Optional: Auto-log snapshot updates =====
-  db.collection("leads").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-    snapshot.forEach(doc => {
-      // console.log("Lead:", doc.data());
-      // Optional: handle leads programmatically without displaying
-    });
-  });
-
-  db.collection("chat").orderBy("timestamp").onSnapshot(snapshot => {
-    snapshot.forEach(doc => {
-      // console.log("Chat:", doc.data());
-      // Optional: handle chat messages programmatically
-    });
-  });
-
-  // ===== Example: Hook your existing form buttons =====
-  // Assuming your website has input fields with IDs: 'leadName', 'leadNumber', 'leadButton'
-  const leadBtn = document.getElementById("leadButton");
-  if (leadBtn) {
-    leadBtn.addEventListener("click", () => {
-      const name = document.getElementById("leadName").value;
-      const number = document.getElementById("leadNumber").value;
-      addLead(name, number);
-    });
-  }
-
-  // Assuming chat inputs: 'chatUser', 'chatMsg', 'chatSendBtn'
-  const chatBtn = document.getElementById("chatSendBtn");
-  if (chatBtn) {
-    chatBtn.addEventListener("click", () => {
-      const user = document.getElementById("chatUser").value;
-      const message = document.getElementById("chatMsg").value;
-      sendChat(user, message);
-    });
-  }
-
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <!-- App Shell -->
   <div id="appShell" class="hidden min-h-screen">
     <!-- Fixed Sidebar + Right Panel Layout -->
@@ -177,7 +79,10 @@ const firebaseConfig = {
                     data-target="panel-files"><i data-feather="file" class="w-4 h-4"></i> Files</button>
             <div class="h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
             <button class="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-                    data-target="panel-chat">
+                    data-target="panel-chat"><i data-feather="message-circle" class="w-4 h-4"></i> Chat</button>
+            <button class="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                    data-target="panel-voice"><i data-feather="mic" class="w-4 h-4"></i> Voice</button>
+          </div>
 
           <div class="mt-4 flex items-center gap-2">
             <button onclick="toggleDarkMode()" class="flex-1 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600">
@@ -198,7 +103,7 @@ const firebaseConfig = {
           <div class="flex items-center gap-3">
             <span id="whoami" class="text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full"></span>
           </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400"></div>
+          <div class="text-xs text-gray-500 dark:text-gray-400">Local-only demo • Data saved in your browser</div>
         </header>
 
         <!-- DASHBOARD PANEL -->
@@ -382,19 +287,21 @@ const firebaseConfig = {
           </div>
         </section>
 
-        <!-- VOICE PANEL -->
-        <section id="panel-voice" class="hidden space-y-4">
-          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4">
+        <!-- Voice -->
+        <section id="panel-voice" class="tab-panel hidden space-y-4">
+          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
             <div class="flex items-center gap-2 mb-3">
               <i data-feather="mic" class="w-5 h-5"></i>
-              <h2 class="font-semibold">Voice Channel (mic join/leave)</h2>
+              <h2 class="font-semibold">Voice Channel (local mic preview)</h2>
             </div>
             <div class="flex items-center gap-3">
               <button id="btnJoinVoice" onclick="joinVoice()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2">
-                <i data-feather="mic" class="w-4 h-4"></i> Join Mic
+                <i data-feather="mic" class="w-4 h-4"></i>
+                Join Mic
               </button>
               <button id="btnLeaveVoice" onclick="leaveVoice()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center gap-2 hidden">
-                <i data-feather="mic-off" class="w-4 h-4"></i> Leave Mic
+                <i data-feather="mic-off" class="w-4 h-4"></i>
+                Leave Mic
               </button>
               <span id="voiceStatus" class="text-sm text-gray-600 dark:text-gray-300">Not connected</span>
             </div>
@@ -405,22 +312,25 @@ const firebaseConfig = {
               </div>
             </div>
             <audio id="voicePreview" class="hidden" autoplay></audio>
-            <div class="text-xs text-gray-500 mt-2">Local preview only (no internet/routing). For real voice rooms, add a WebRTC SFU/Signaling server (e.g., LiveKit, Daily, Janus).</div>
+            <div class="text-xs text-gray-500 mt-2">Local preview only (no networking). To make this multi-user across the internet, integrate a WebRTC SFU (e.g., LiveKit, Daily, Janus). This build does <strong>show names + speaking movement</strong> across tabs on the same site using BroadcastChannel/localStorage.</div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
+            <h3 class="text-lg font-semibold mb-2">In Voice</h3>
+            <ul id="voiceMembersList" class="space-y-2"></ul>
           </div>
         </section>
       </main>
 
-      <!-- RIGHT “MEMBERS ONLINE” PANEL -->
+      <!-- Right: Members Online -->
       <aside class="col-span-12 md:col-span-3 lg:col-span-2">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sticky top-4">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-4 sticky top-4">
           <div class="flex items-center gap-2 mb-3">
             <i data-feather="user-check" class="w-5 h-5"></i>
             <h3 class="font-semibold">Members Online</h3>
           </div>
           <ul id="membersList" class="space-y-2"></ul>
-          <div class="mt-4">
-          </div>
-          <div class="text-xs text-gray-500 mt-3">Local-only presence. Your name appears online while logged in.</div>
+          <div class="text-xs text-gray-500 mt-3">Local-only presence. Your name appears online while logged in. Voice room presence is separate below.</div>
         </div>
       </aside>
     </div>
@@ -433,13 +343,23 @@ const firebaseConfig = {
     let leadFilter = "all";
 
     // Chat/Voice state
-    let chatKey = "chatMessages";
+    const chatKey = "chatMessages";
     let mediaStream = null, audioContext = null, analyser = null, rafId = null;
+
+    // Realtime (local) sync: BroadcastChannel + storage fallback
+    const bc = ("BroadcastChannel" in window) ? new BroadcastChannel("app-sync") : null;
+    function bcPost(type, payload){
+      if(bc) { bc.postMessage({ type, payload }); }
+      // storage fallback (triggers 'storage' on other tabs)
+      localStorage.setItem("sync:"+type, JSON.stringify({ t: Date.now(), payload }));
+    }
 
     // Helpers
     const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-    const load = (k, def=[]) => JSON.parse(localStorage.getItem(k) || JSON.stringify(def));
-
+    const load = (k, def=[]) => {
+      try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(def)); }
+      catch { return def; }
+    };
     /* ===== Motivation / Ideas ===== */
     const intros = ["Every call is","Remember,","Stay sharp —","Your next client is","Success is","The grind is","Today is","Each dial is","Don’t forget —","Winning means","Cold calling is","Momentum comes from","Confidence comes from","Energy comes from","Your future is","Discipline is","Consistency means","Push through —","The bag is","Closing comes from","Greatness is","Every ‘no’ is","Focus is","Your dream deal is","Opportunity is","The money is","Each ring is","Persistence is","Courage is","Lock in —"];
     const middles = ["one step closer to a closed deal","waiting behind the next dial","hidden in the objections","a ‘yes’ after the no","built from consistency","won by persistence","earned with patience","fueled by discipline","secured through action","on the other end of the phone","inside the grind","waiting for your voice","one brave question away","created by effort","driven by your energy","found in rejection","a numbers game — and you’re playing to win","just one call away","hiding behind hesitation","waiting on your confidence","delivered by execution","unlocked with every dial","about planting seeds","a result of discipline","stacked on small wins","earned, not given","always in motion","a daily habit","about staying in the pocket","the reward of action"];
@@ -728,61 +648,103 @@ const firebaseConfig = {
       if(e.key === 'Enter' && document.activeElement.id === 'chatInput'){ e.preventDefault(); sendChat(); }
     });
 
-    /* ===== Voice (local mic preview) ===== */
+   /* ===== Voice (local mic preview + shared presence across tabs) ===== */
+    const VOICE_KEY = 'voiceMembers';
+    const SPEAK_KEY = 'voiceSpeaking'; // map { user: boolean }
+
+    function getVoiceMembers(){ return new Set(load(VOICE_KEY, [])); }
+    function setVoiceMembers(set){ save(VOICE_KEY, Array.from(set)); bcPost('voiceMembers', Array.from(set)); refreshVoiceMembers(); }
+
+    function getSpeakingMap(){ return Object.assign({}, load(SPEAK_KEY, {})); }
+    function setSpeakingMap(map){ save(SPEAK_KEY, map); bcPost('voiceSpeaking', map); updateSpeakingDots(map); }
+
+    function addToVoice(name){ const s = getVoiceMembers(); s.add(name); setVoiceMembers(s); }
+    function removeFromVoice(name){ const s = getVoiceMembers(); if(s.has(name)){ s.delete(name); setVoiceMembers(s); }
+      // also clear speaking flag for that user
+      const sm = getSpeakingMap(); if(sm[name]){ delete sm[name]; setSpeakingMap(sm); }
+    }
+
     async function joinVoice(){
       if(mediaStream) return;
       try{
-        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        document.getElementById('voicePreview').srcObject = mediaStream;
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+        const audioEl = document.getElementById('voicePreview');
+        audioEl.srcObject = mediaStream;
+        audioEl.muted = true; // don't hear yourself
+
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioContext.createMediaStreamSource(mediaStream);
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 2048;
-        source.connect(analyser);
+        analyser = audioContext.createAnalyser(); analyser.fftSize = 2048; source.connect(analyser);
+
+        addToVoice(CURUSER);
+
         document.getElementById('voiceStatus').textContent = 'Mic active (local preview)';
         document.getElementById('btnJoinVoice').classList.add('hidden');
         document.getElementById('btnLeaveVoice').classList.remove('hidden');
+
         vuLoop();
-      }catch(err){
-        alert('Microphone permission denied or not available.');
-        console.error(err);
-      }
+      }catch(err){ alert('Microphone permission denied or not available.'); console.error(err); }
     }
+
     function leaveVoice(){
-      if(rafId) cancelAnimationFrame(rafId);
-      rafId = null;
-      if(analyser && analyser.disconnect) try{ analyser.disconnect(); }catch{}
-      if(audioContext && audioContext.close) try{ audioContext.close(); }catch{}
+      if(rafId) cancelAnimationFrame(rafId); rafId = null;
+      try{ if(analyser && analyser.disconnect) analyser.disconnect(); }catch{}
+      try{ if(audioContext && audioContext.close) audioContext.close(); }catch{}
       analyser = null; audioContext = null;
-      if(mediaStream){
-        mediaStream.getTracks().forEach(t=>t.stop());
-        mediaStream = null;
-      }
+      if(mediaStream){ mediaStream.getTracks().forEach(t=>t.stop()); mediaStream = null; }
       document.getElementById('btnLeaveVoice').classList.add('hidden');
       document.getElementById('btnJoinVoice').classList.remove('hidden');
       document.getElementById('voiceStatus').textContent = 'Not connected';
       document.getElementById('vuFill').style.width = '0%';
+      // update presence
+      removeFromVoice(CURUSER);
     }
+
     function vuLoop(){
-      const buf = new Uint8Array(analyser.fftSize);
-      analyser.getByteTimeDomainData(buf);
-      // compute simple peak
-      let peak = 0;
-      for(let i=0;i<buf.length;i++){
-        const v = Math.abs(buf[i]-128)/128;
-        if(v>peak) peak = v;
-      }
-      const pct = Math.min(100, Math.floor(peak*160)); // scale a bit
+      if(!analyser) return;
+      const buf = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(buf);
+      let peak = 0; for(let i=0;i<buf.length;i++){ const v = Math.abs(buf[i]-128)/128; if(v>peak) peak = v; }
+      const pct = Math.min(100, Math.floor(peak*160));
       document.getElementById('vuFill').style.width = pct + '%';
+      // speaking map update
+      const sm = getSpeakingMap(); const active = pct > 5; // threshold
+      if(sm[CURUSER] !== active){ sm[CURUSER] = active; setSpeakingMap(sm); }
       rafId = requestAnimationFrame(vuLoop);
+    }
+
+    function refreshVoiceMembers(){
+      const list = document.getElementById("voiceMembersList");
+      list.innerHTML = "";
+      const members = Array.from(getVoiceMembers());
+      const speaking = getSpeakingMap();
+      members.forEach(name=>{
+        const me = name === CURUSER;
+        const li = document.createElement("li");
+        li.className = "flex items-center justify-between bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2";
+        li.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span id="voice-dot-${name}" class="w-2 h-2 rounded-full ${speaking[name] ? 'bg-green-400 pulse-soft' : 'bg-emerald-500'}"></span>
+            <span>${name}${me ? ' (you)' : ''}</span>
+          </div>
+          ${me ? '<span class="text-xs text-gray-500">local</span>' : ''}
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function updateSpeakingDots(map){
+      Object.entries(map).forEach(([name, active])=>{
+        const dot = document.getElementById('voice-dot-' + name);
+        if(dot){ dot.className = 'w-2 h-2 rounded-full ' + (active ? 'bg-green-400 pulse-soft' : 'bg-emerald-500'); }
+      });
     }
 
     /* ===== Members Online (local presence) ===== */
     function refreshMembers(){
       const list = document.getElementById('membersList');
-      const arr = load('members', []);
-      list.innerHTML = "";
+      let arr = load('members', []);
       if(CURUSER && !arr.includes(CURUSER)){ arr.push(CURUSER); save('members', arr); }
+      list.innerHTML = "";
       arr.forEach(name=>{
         const li = document.createElement('li');
         li.className = "flex items-center justify-between bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2";
@@ -792,22 +754,12 @@ const firebaseConfig = {
             <span class="w-2 h-2 rounded-full ${me ? 'bg-green-500' : 'bg-emerald-400'}"></span>
             <span>${name}${me ? ' (you)' : ''}</span>
           </div>
-          <button class="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
-            onclick="removeMember('${name}')">Hide</button>`;
+          ${me ? '' : `<button class="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500" onclick="removeMember('${name}')">Hide</button>`}
+        `;
         list.appendChild(li);
       });
     }
-    function addFakeMember(){
-      const inp = document.getElementById('memberNameInput');
-      const name = inp.value.trim(); if(!name) return;
-      const arr = new Set(load('members', [])); arr.add(name); save('members', Array.from(arr));
-      inp.value = ""; refreshMembers();
-    }
-    function removeMember(name){
-      // keep you always listed
-      if(name === CURUSER) return alert("You can't remove yourself.");
-      save('members', load('members', []).filter(n=>n!==name)); refreshMembers();
-    }
+    function removeMember(name){ if(name === CURUSER) return alert("You can't remove yourself."); save('members', load('members', []).filter(n=>n!==name)); refreshMembers(); }
 
     /* ===== Dark Mode ===== */
     function toggleDarkMode(){
@@ -822,7 +774,7 @@ const firebaseConfig = {
       const user = localStorage.getItem("currentUser") || null;
       if(user){ CURUSER = user; document.getElementById("whoami").textContent = `Signed in as: ${CURUSER}`; }
       if(localStorage.getItem("darkmode")==="true"){ document.documentElement.classList.add("dark"); }
-      renderLeads(); renderEvents(); renderProjects(); renderFiles(); renderChat(); refreshMembers();
+      renderLeads(); renderEvents(); renderProjects(); renderFiles(); renderChat(); refreshMembers(); refreshVoiceMembers();
       openTab('panel-dashboard');
     }
 
@@ -836,10 +788,189 @@ const firebaseConfig = {
         loadAll();
         generateMotivation();
         generateColdCallIdea();
+        window.addEventListener('beforeunload', handleOffline);
       }
+      const audioEl = document.getElementById('voicePreview'); if(audioEl) audioEl.muted = true; // never loopback
       feather.replace();
     });
+
+    // Realtime listeners
+    if(bc){ bc.onmessage = ({data})=> handleSync(data); }
+    window.addEventListener('storage', (e)=>{
+      if(e.key && e.key.startsWith('sync:')){
+        try{ const { payload } = JSON.parse(e.newValue || '{}'); handleSync({ type: e.key.replace('sync:',''), payload }); }catch{}
+      }
+      // Also re-render if underlying data changed (e.g., different tab modified things)
+      if([VOICE_KEY, SPEAK_KEY, 'members', chatKey, 'leads', 'projects', 'files', 'events'].includes(e.key)){
+        if(e.key===VOICE_KEY) refreshVoiceMembers();
+        if(e.key===SPEAK_KEY) updateSpeakingDots(load(SPEAK_KEY, {}));
+        if(e.key==='members') refreshMembers();
+        if(e.key===chatKey) renderChat();
+        if(e.key==='leads') renderLeads();
+        if(e.key==='projects') renderProjects();
+        if(e.key==='files') renderFiles();
+        if(e.key==='events') renderEvents();
+      }
+    });
+
+    function handleSync(msg){
+      if(!msg || !msg.type) return;
+      if(msg.type==='presence'){ refreshMembers(); }
+      if(msg.type==='voiceMembers'){ refreshVoiceMembers(); }
+      if(msg.type==='voiceSpeaking'){ updateSpeakingDots(msg.payload || {}); }
+    }
   </script>
+
+
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
+<script>
+  // ===== Firebase Config =====
+const firebaseConfig = {
+  apiKey: "AIzaSyARv2Q8CvHbMSMFapxWgmDETE7GIVcqL7g",
+  authDomain: "world-8f807.firebaseapp.com",
+  databaseURL: "https://world-8f807-default-rtdb.firebaseio.com",
+  projectId: "world-8f807",
+  storageBucket: "world-8f807.firebasestorage.app",
+  messagingSenderId: "739251825999",
+  appId: "1:739251825999:web:63d0942cf800fa4f55293a",
+  measurementId: "G-LSE8PX5VHY"
+};
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+  /* ------------------- LEADS ------------------- */
+  async function addLead(name, number) {
+    if (!name || !number) return;
+    await db.collection("leads").add({
+      name,
+      number,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  const leadBtn = document.getElementById("leadButton");
+  if (leadBtn) {
+    leadBtn.addEventListener("click", () => {
+      const name = document.getElementById("leadName").value;
+      const number = document.getElementById("leadNumber").value;
+      addLead(name, number);
+      document.getElementById("leadName").value = "";
+      document.getElementById("leadNumber").value = "";
+    });
+  }
+
+  db.collection("leads").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+    const leadsList = document.getElementById("leads");
+    if (!leadsList) return;
+    leadsList.innerHTML = "";
+    snapshot.forEach(doc => {
+      const lead = doc.data();
+      leadsList.innerHTML += `<li>${lead.name} - ${lead.number}</li>`;
+    });
+  });
+
+  /* ------------------- TEXT CHAT ------------------- */
+  async function sendChat(user, message) {
+    if (!message) return;
+    await db.collection("chat").add({
+      user: user || "Anonymous",
+      message,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  const chatBtn = document.getElementById("chatSendBtn");
+  if (chatBtn) {
+    chatBtn.addEventListener("click", () => {
+      const user = document.getElementById("chatUser").value;
+      const message = document.getElementById("chatMsg").value;
+      sendChat(user, message);
+      document.getElementById("chatMsg").value = "";
+    });
+  }
+
+  db.collection("chat").orderBy("timestamp").onSnapshot(snapshot => {
+    const chatBox = document.getElementById("chat");
+    if (!chatBox) return;
+    chatBox.innerHTML = "";
+    snapshot.forEach(doc => {
+      const msg = doc.data();
+      chatBox.innerHTML += `<p><b>${msg.user}:</b> ${msg.message}</p>`;
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+
+  /* ------------------- VOICE CHAT ------------------- */
+  let pc;
+  async function createPeerConnection() {
+    pc = new RTCPeerConnection();
+    pc.onicecandidate = e => {
+      if (e.candidate) {
+        db.collection("voice").doc("channel").collection("candidates").add(e.candidate.toJSON());
+      }
+    };
+    pc.ontrack = e => {
+      const remoteAudio = document.getElementById("remoteAudio");
+      if (remoteAudio) remoteAudio.srcObject = e.streams[0];
+    };
+    const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+    return pc;
+  }
+
+  const startVoice = document.getElementById("startVoice");
+  if (startVoice) {
+    startVoice.addEventListener("click", async () => {
+      const pc = await createPeerConnection();
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      await db.collection("voice").doc("channel").set({ offer });
+      document.getElementById("voiceStatus").textContent = "Voice channel started. Waiting for joiner...";
+
+      db.collection("voice").doc("channel").onSnapshot(async (doc) => {
+        const data = doc.data();
+        if (data?.answer && !pc.currentRemoteDescription) {
+          await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+          document.getElementById("voiceStatus").textContent = "Connected!";
+        }
+      });
+
+      db.collection("voice").doc("channel").collection("candidates").onSnapshot(snap => {
+        snap.docChanges().forEach(change => {
+          if (change.type === "added") {
+            pc.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+          }
+        });
+      });
+    });
+  }
+
+  const joinVoice = document.getElementById("joinVoice");
+  if (joinVoice) {
+    joinVoice.addEventListener("click", async () => {
+      const pc = await createPeerConnection();
+      const doc = await db.collection("voice").doc("channel").get();
+      const data = doc.data();
+      if (!data?.offer) return alert("No active voice channel");
+      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      await db.collection("voice").doc("channel").update({ answer });
+      document.getElementById("voiceStatus").textContent = "Joined voice channel!";
+
+      db.collection("voice").doc("channel").collection("candidates").onSnapshot(snap => {
+        snap.docChanges().forEach(change => {
+          if (change.type === "added") {
+            pc.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+          }
+        });
+      });
+    });
+  }
+</script>
+
 </body>
 </html>
-
