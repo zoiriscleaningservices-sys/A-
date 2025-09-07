@@ -822,12 +822,22 @@
   </script>
 
 
+
+
+
+
+
+
+
+
+
+
   <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
 <script>
-  // ===== Firebase Config =====
+  /* ------------------- FIREBASE INIT ------------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyARv2Q8CvHbMSMFapxWgmDETE7GIVcqL7g",
   authDomain: "world-8f807.firebaseapp.com",
@@ -838,17 +848,15 @@ const firebaseConfig = {
   appId: "1:739251825999:web:63d0942cf800fa4f55293a",
   measurementId: "G-LSE8PX5VHY"
 };
+
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
   /* ------------------- LEADS ------------------- */
   async function addLead(name, number) {
     if (!name || !number) return;
-    await db.collection("leads").add({
-      name,
-      number,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    await db.collection("leads").add({ name, number, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
   }
 
   const leadBtn = document.getElementById("leadButton");
@@ -857,120 +865,144 @@ const analytics = getAnalytics(app);
       const name = document.getElementById("leadName").value;
       const number = document.getElementById("leadNumber").value;
       addLead(name, number);
-      document.getElementById("leadName").value = "";
-      document.getElementById("leadNumber").value = "";
+      leadName.value = leadNumber.value = "";
     });
   }
 
-  db.collection("leads").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-    const leadsList = document.getElementById("leads");
-    if (!leadsList) return;
-    leadsList.innerHTML = "";
-    snapshot.forEach(doc => {
-      const lead = doc.data();
-      leadsList.innerHTML += `<li>${lead.name} - ${lead.number}</li>`;
+  db.collection("leads").orderBy("timestamp","desc").onSnapshot(snap => {
+    const list = document.getElementById("leads");
+    if (!list) return;
+    list.innerHTML = "";
+    snap.forEach(doc => {
+      const l = doc.data();
+      list.innerHTML += `<li>${l.name} - ${l.number}</li>`;
     });
   });
 
   /* ------------------- TEXT CHAT ------------------- */
   async function sendChat(user, message) {
     if (!message) return;
-    await db.collection("chat").add({
-      user: user || "Anonymous",
-      message,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    await db.collection("chat").add({ user:user||"Anon", message, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
   }
 
   const chatBtn = document.getElementById("chatSendBtn");
   if (chatBtn) {
     chatBtn.addEventListener("click", () => {
-      const user = document.getElementById("chatUser").value;
-      const message = document.getElementById("chatMsg").value;
-      sendChat(user, message);
-      document.getElementById("chatMsg").value = "";
+      sendChat(chatUser.value, chatMsg.value);
+      chatMsg.value = "";
     });
   }
 
-  db.collection("chat").orderBy("timestamp").onSnapshot(snapshot => {
+  db.collection("chat").orderBy("timestamp").onSnapshot(snap => {
     const chatBox = document.getElementById("chat");
     if (!chatBox) return;
     chatBox.innerHTML = "";
-    snapshot.forEach(doc => {
-      const msg = doc.data();
-      chatBox.innerHTML += `<p><b>${msg.user}:</b> ${msg.message}</p>`;
+    snap.forEach(doc => {
+      const m = doc.data();
+      chatBox.innerHTML += `<p><b>${m.user}:</b> ${m.message}</p>`;
     });
     chatBox.scrollTop = chatBox.scrollHeight;
   });
 
-  /* ------------------- VOICE CHAT ------------------- */
-  let pc;
-  async function createPeerConnection() {
-    pc = new RTCPeerConnection();
+  /* ------------------- VOICE CHAT (Multi-User) ------------------- */
+  const peers = {};
+  let localStream;
+
+  async function initVoice() {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+  }
+
+  async function joinVoiceChannel(channelId="default") {
+    await initVoice();
+    const userId = Math.random().toString(36).substr(2,9);
+    const pc = new RTCPeerConnection();
+    peers[userId] = pc;
+
+    // Add local audio
+    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+    // Play remote audio
+    pc.ontrack = event => {
+      const audio = document.createElement("audio");
+      audio.srcObject = event.streams[0];
+      audio.autoplay = true;
+      document.body.appendChild(audio);
+    };
+
+    // ICE candidates
     pc.onicecandidate = e => {
       if (e.candidate) {
-        db.collection("voice").doc("channel").collection("candidates").add(e.candidate.toJSON());
+        db.collection("voice").doc(channelId).collection("candidates").add({ from:userId, candidate:e.candidate.toJSON() });
       }
     };
-    pc.ontrack = e => {
-      const remoteAudio = document.getElementById("remoteAudio");
-      if (remoteAudio) remoteAudio.srcObject = e.streams[0];
-    };
-    const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
-    stream.getTracks().forEach(track => pc.addTrack(track, stream));
-    return pc;
-  }
 
-  const startVoice = document.getElementById("startVoice");
-  if (startVoice) {
-    startVoice.addEventListener("click", async () => {
-      const pc = await createPeerConnection();
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-      await db.collection("voice").doc("channel").set({ offer });
-      document.getElementById("voiceStatus").textContent = "Voice channel started. Waiting for joiner...";
+    // Create offer
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
 
-      db.collection("voice").doc("channel").onSnapshot(async (doc) => {
-        const data = doc.data();
-        if (data?.answer && !pc.currentRemoteDescription) {
-          await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-          document.getElementById("voiceStatus").textContent = "Connected!";
+    await db.collection("voice").doc(channelId).collection("offers").doc(userId).set({ offer });
+
+    // Listen for answers
+    db.collection("voice").doc(channelId).collection("answers").doc(userId).onSnapshot(async snap => {
+      const data = snap.data();
+      if (data?.answer && !pc.currentRemoteDescription) {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+      }
+    });
+
+    // Listen for other users’ offers
+    db.collection("voice").doc(channelId).collection("offers").onSnapshot(async snap => {
+      for (const change of snap.docChanges()) {
+        if (change.type === "added" && change.doc.id !== userId) {
+          const otherId = change.doc.id;
+          if (peers[otherId]) continue;
+
+          const pc2 = new RTCPeerConnection();
+          peers[otherId] = pc2;
+
+          localStream.getTracks().forEach(track => pc2.addTrack(track, localStream));
+
+          pc2.ontrack = event => {
+            const audio = document.createElement("audio");
+            audio.srcObject = event.streams[0];
+            audio.autoplay = true;
+            document.body.appendChild(audio);
+          };
+
+          pc2.onicecandidate = e => {
+            if (e.candidate) {
+              db.collection("voice").doc(channelId).collection("candidates").add({ from:userId, candidate:e.candidate.toJSON() });
+            }
+          };
+
+          await pc2.setRemoteDescription(new RTCSessionDescription(change.doc.data().offer));
+          const answer = await pc2.createAnswer();
+          await pc2.setLocalDescription(answer);
+          await db.collection("voice").doc(channelId).collection("answers").doc(otherId).set({ answer });
+        }
+      }
+    });
+
+    // Listen for ICE candidates
+    db.collection("voice").doc(channelId).collection("candidates").onSnapshot(snap => {
+      snap.docChanges().forEach(change => {
+        const data = change.doc.data();
+        if (data.from !== userId && peers[data.from]) {
+          peers[data.from].addIceCandidate(new RTCIceCandidate(data.candidate));
         }
       });
-
-      db.collection("voice").doc("channel").collection("candidates").onSnapshot(snap => {
-        snap.docChanges().forEach(change => {
-          if (change.type === "added") {
-            pc.addIceCandidate(new RTCIceCandidate(change.doc.data()));
-          }
-        });
-      });
     });
+
+    document.getElementById("voiceStatus").textContent = "Connected to voice channel!";
   }
 
-  const joinVoice = document.getElementById("joinVoice");
-  if (joinVoice) {
-    joinVoice.addEventListener("click", async () => {
-      const pc = await createPeerConnection();
-      const doc = await db.collection("voice").doc("channel").get();
-      const data = doc.data();
-      if (!data?.offer) return alert("No active voice channel");
-      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      await db.collection("voice").doc("channel").update({ answer });
-      document.getElementById("voiceStatus").textContent = "Joined voice channel!";
+  const startBtn = document.getElementById("startVoice");
+  const joinBtn = document.getElementById("joinVoice");
 
-      db.collection("voice").doc("channel").collection("candidates").onSnapshot(snap => {
-        snap.docChanges().forEach(change => {
-          if (change.type === "added") {
-            pc.addIceCandidate(new RTCIceCandidate(change.doc.data()));
-          }
-        });
-      });
-    });
-  }
+  if (startBtn) startBtn.onclick = () => joinVoiceChannel("default");
+  if (joinBtn) joinBtn.onclick = () => joinVoiceChannel("default");
 </script>
+
 
 </body>
 </html>
